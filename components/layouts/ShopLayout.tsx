@@ -28,7 +28,7 @@ const ShopLayout: FC<PropsWithChildren<Props>> = ({
         <Navbar />
       </nav>
 
-      <SideMenu />
+      {/* <SideMenu /> */}
 
       <main
         style={{
