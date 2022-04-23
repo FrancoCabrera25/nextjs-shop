@@ -1,6 +1,7 @@
 import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
+import { SizeSelector } from "../../components/products";
 import { ItemCounter, SlidesShow } from "../../components/ui";
 import { initialData } from "../../database/products";
 
@@ -25,6 +26,7 @@ const ProductPage: NextPage = () => {
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
               <ItemCounter />
+              <SizeSelector sizes={ product.sizes} />
             </Box>
           <Button color='secondary' className="circular-btn">Agregar</Button>
 
