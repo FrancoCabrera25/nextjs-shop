@@ -11,7 +11,12 @@ const productsInCart = [
     initialData.products[2]
 ]
 
-const CardList: FC = () => {
+interface Props {
+    editable?: boolean;
+}
+
+const CardList: FC<Props> = ({ editable }) => {
+
   return (
   <>
   {
@@ -30,14 +35,21 @@ const CardList: FC = () => {
                 <Box display='flex' flexDirection='column' >
                     <Typography variant='body1'> { product.title }</Typography>
                     <Typography variant='body1'>Talle <strong>M</strong></Typography>
-                   {/* Condicional */}
-                    <ItemCounter />
+                 {
+                     editable ? 
+                     <ItemCounter /> : <Typography variant='h5'>3</Typography>
+                 }
+
                 </Box>
                </Grid>
                <Grid item xs={2} display='flex' alignItems='center' flexDirection= 'column'>
                <Typography variant='subtitle1'> $ { product.price }</Typography>
-               {/* editable */}
-               <Button variant='text' color='secondary'>Eliminar</Button>
+               {
+                   editable && (
+                    <Button variant='text' color='secondary'>Eliminar</Button>
+                   )
+               }
+
                </Grid>
            </Grid>
   ))
