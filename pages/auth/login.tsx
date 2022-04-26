@@ -33,7 +33,7 @@ const LoginPage: NextPage = () => {
 
           <Grid item xs={12} display='flex' justifyContent='end'>
            <NextLink href='/auth/register' passHref>
-            <Link>
+            <Link underline='always'>
             ¿No tienes cuenta?
             </Link>
            </NextLink>
