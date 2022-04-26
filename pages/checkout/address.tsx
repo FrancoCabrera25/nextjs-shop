@@ -1,7 +1,8 @@
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
 
-const address = () => {
+const AddressPage: NextPage = () => {
   return (
     <ShopLayout
       title="Dirección"
@@ -59,4 +60,4 @@ const address = () => {
   );
 };
 
-export default address;
+export default AddressPage;
