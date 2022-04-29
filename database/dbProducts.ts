@@ -1,0 +1,29 @@
+import { db } from ".";
+import { IProduct } from "../interface";
+import { Product } from "../models";
+export const getProductBySlug = async (
+  slug: string
+): Promise<IProduct | null> => {
+  await db.connect();
+
+  const product = await Product.findOne({ slug }).lean();
+  await db.disconnect();
+  if (product) {
+    return JSON.parse(JSON.stringify(product));
+  }
+
+  return null;
+};
+
+interface ProductSlugs {
+  slug: string;
+}
+
+export const getAllProdutSlugs = async (): Promise<ProductSlugs[]> => {
+  await db.connect();
+
+  const slugs = await Product.find().select("slug -_id").lean();
+  await db.disconnect();
+
+  return slugs;
+};
