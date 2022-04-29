@@ -9,14 +9,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { UiContext } from "../../context";
 
 const Navbar: FC = () => {
 
 const { asPath } = useRouter();
-
+const { toggleSideMenu } = useContext(UiContext);
 
   return (
     <AppBar>
@@ -63,7 +64,7 @@ const { asPath } = useRouter();
           </Link>
         </NextLink>
   
-       <Button>Menu</Button>
+       <Button onClick={ toggleSideMenu }>Menu</Button>
       </Toolbar>
     </AppBar>
   );
