@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { UiContext } from "../../context";
+import SearchInput from "./SearchInput";
 
 const Navbar: FC = () => {
   const { asPath, push } = useRouter();
@@ -75,22 +76,13 @@ const Navbar: FC = () => {
 
         {/* pantallas grandes  */}
         {isSearchVisible ? (
-          <Input
-            className="fadeIn"
-            autoFocus
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => (e.key === "Enter" ? onSearchTerm() : null)}
-            type="text"
-            placeholder="Buscar..."
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={() => setIsSearchVisible(false)}>
-                  <ClearOutlined />
-                </IconButton>
-              </InputAdornment>
-            }
-          />
+             <SearchInput
+             showInconClearInput
+             searchText={searchTerm}
+             setValue={setSearchTerm}
+             onSearch={onSearchTerm}
+             onClearInput= { () => setIsSearchVisible(false)}
+           />
         ) : (
           <IconButton
             sx={{ display: { xs: "none", sm: "flex" } }}

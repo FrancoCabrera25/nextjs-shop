@@ -25,18 +25,19 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
+import { SearchInput } from ".";
 import { UiContext } from "../../context";
 
 const SideMenu = () => {
   const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const router = useRouter();
 
   const navigateTo = (url: string) => {
     router.push(url);
     toggleSideMenu();
-    setSearchTerm('');
+    setSearchTerm("");
   };
 
   const onSearchTerm = () => {
@@ -44,7 +45,7 @@ const SideMenu = () => {
 
     navigateTo(`/search/${searchTerm}`);
   };
-
+ 
   return (
     <Drawer
       open={isMenuOpen}
@@ -55,23 +56,13 @@ const SideMenu = () => {
       <Box sx={{ width: 250, paddingTop: 5 }}>
         <List>
           <ListItem>
-            <Input
-              autoFocus
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress = { (e) => e.key === 'Enter' ? onSearchTerm() : null  }
-              type="text"
-              placeholder="Buscar..."
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={onSearchTerm} aria-label="toggle password visibility">
-                    <SearchOutlined />
-                  </IconButton>
-                </InputAdornment>
-              }
+            <SearchInput
+              showIconSearch
+              searchText={searchTerm}
+              setValue={setSearchTerm}
+              onSearch={onSearchTerm}
             />
           </ListItem>
-
           <ListItem button>
             <ListItemIcon>
               <AccountCircleOutlined />
