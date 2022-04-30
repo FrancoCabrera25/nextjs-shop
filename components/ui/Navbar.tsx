@@ -5,19 +5,32 @@ import {
   Box,
   Button,
   IconButton,
+  Input,
+  InputAdornment,
   Link,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { FC, useContext } from "react";
-import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
+import { FC, useContext, useState } from "react";
+import {
+  ClearOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+} from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { UiContext } from "../../context";
 
 const Navbar: FC = () => {
+  const { asPath, push } = useRouter();
+  const { toggleSideMenu } = useContext(UiContext);
 
-const { asPath } = useRouter();
-const { toggleSideMenu } = useContext(UiContext);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+  const onSearchTerm = () => {
+    if (searchTerm.trim().length === 0) return;
+    push(`/search/${searchTerm}`);
+  };
 
   return (
     <AppBar>
@@ -29,28 +42,70 @@ const { toggleSideMenu } = useContext(UiContext);
           </Link>
         </NextLink>
         <Box flex={1} />
-        <Box sx={{ display: { xs: 'none', sm:' block' } }}>
-        <NextLink href="/category/men" passHref>
-          <Link>
-            <Button color = { asPath === '/category/men' ? 'primary' : 'info'  }>Hombres</Button>
-          </Link>
-        </NextLink>
-        <NextLink href="/category/women" passHref>
-          <Link>
-            <Button color = { asPath === '/category/women' ? 'primary' : 'info'  }>Mujeres</Button>
-          </Link>
-        </NextLink>
-        <NextLink href="/category/kid" passHref>
-          <Link>
-            <Button color = { asPath === '/category/kid' ? 'primary' : 'info'  }>Niños</Button>
-          </Link>
-        </NextLink>
+        <Box
+          sx={{
+            display: isSearchVisible ? "none" : { xs: "none", sm: " block" },
+          }}
+          className="fadeIn"
+        >
+          <NextLink href="/category/men" passHref>
+            <Link>
+              <Button color={asPath === "/category/men" ? "primary" : "info"}>
+                Hombres
+              </Button>
+            </Link>
+          </NextLink>
+          <NextLink href="/category/women" passHref>
+            <Link>
+              <Button color={asPath === "/category/women" ? "primary" : "info"}>
+                Mujeres
+              </Button>
+            </Link>
+          </NextLink>
+          <NextLink href="/category/kid" passHref>
+            <Link>
+              <Button color={asPath === "/category/kid" ? "primary" : "info"}>
+                Niños
+              </Button>
+            </Link>
+          </NextLink>
         </Box>
-     
 
         <Box flex={1} />
 
-        <IconButton>
+        {/* pantallas grandes  */}
+        {isSearchVisible ? (
+          <Input
+            className="fadeIn"
+            autoFocus
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => (e.key === "Enter" ? onSearchTerm() : null)}
+            type="text"
+            placeholder="Buscar..."
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={() => setIsSearchVisible(false)}>
+                  <ClearOutlined />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        ) : (
+          <IconButton
+            sx={{ display: { xs: "none", sm: "flex" } }}
+            onClick={() => setIsSearchVisible(true)}
+            className="fadeIn"
+          >
+            <SearchOutlined />
+          </IconButton>
+        )}
+
+        {/* pantalla pequeñas */}
+        <IconButton
+          sx={{ display: { xs: "flex", sm: "none" } }}
+          onClick={toggleSideMenu}
+        >
           <SearchOutlined />
         </IconButton>
 
@@ -63,8 +118,8 @@ const { toggleSideMenu } = useContext(UiContext);
             </IconButton>
           </Link>
         </NextLink>
-  
-       <Button onClick={ toggleSideMenu }>Menu</Button>
+
+        <Button onClick={toggleSideMenu}>Menu</Button>
       </Toolbar>
     </AppBar>
   );
