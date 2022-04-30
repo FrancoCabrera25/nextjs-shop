@@ -10,12 +10,34 @@ import { GetStaticProps, GetStaticPaths } from "next";
 // - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from "next";
 import { dbProducts } from "../../database";
+import { useState } from "react";
+import { ICartProduct } from "../../interface/cart";
+import { ISizes } from "../../interface/products";
 
 interface Props {
   product: IProduct;
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+  const [selectedSize, setSelectedSize] = useState<ISizes>();
+  const [currentQuantity, setCurrentQuantity] = useState(1);
+
+
+  const addCart = () =>{
+    console.log('currentQuantity', currentQuantity);
+    console.log('selectedSize', selectedSize);
+  }
+  // const [tempCartProduct, setTemCartProduct] = useState<ICartProduct>({
+  //   _id: product._id,
+  //   image: product.images[0],
+  //   price: product.price,
+  //   size: '',
+  //   slug: product.slug,
+  //   title: product.title,
+  //   gender: product.gender,
+  //   quantity: 1
+  // })
+
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -33,14 +55,27 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
-              <ItemCounter />
-              <SizeSelector sizes={product.sizes} />
+              <ItemCounter 
+              currentValue={currentQuantity}
+              maxValue={product.inStock}
+              onSetCounter={setCurrentQuantity} />
+              <SizeSelector
+                sizes={product.sizes}
+                selectedSize={selectedSize}
+                onSelectedSize={ setSelectedSize }
+              />
             </Box>
-            <Button color="secondary" className="circular-btn">
-              Agregar
-            </Button>
-
-            {/* <Chip label='No hay disponibles' color='error' variant='outlined' /> */}
+            {product.inStock > 0 ? (
+              <Button onClick={addCart} color="secondary" className="circular-btn">
+                {selectedSize ? "Agregar al carrito" : "Seleccione una talla"}
+              </Button>
+            ) : (
+              <Chip
+                label="No hay disponibles"
+                color="error"
+                variant="outlined"
+              />
+            )}
 
             <Box sx={{ mt: 3 }}>
               <Typography variant="subtitle2">Descripción</Typography>
@@ -107,6 +142,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
     },
-    revalidate: 60 * 60 * 24
+    revalidate: 60 * 60 * 24,
   };
 };
