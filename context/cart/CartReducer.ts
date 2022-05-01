@@ -10,8 +10,10 @@ export const cartReducer = (state: CartState, action: UiActionType): CartState =
 
     switch (action.type) {
         case '[CART] - LOAD CART FROM COOKIES':
+            console.log('load cookies', action.payload);
            return {
                ...state,
+               cart: action.payload
            }
         case '[CART] - UPDATE CART': 
         return {

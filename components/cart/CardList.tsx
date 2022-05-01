@@ -23,7 +23,7 @@ const CardList: FC<Props> = ({ editable }) => {
       productsInCart.map(product => (
            <Grid container key={product.slug} spacing={2} sx={{ mb: 1 }}>
                <Grid item xs={3}>
-                <NextLink href='product/slug' passHref>
+                <NextLink href='/product/slug' passHref>
                 <Link>
                 <CardActionArea>
                     <CardMedia  image={`/products/${product.images[0]}`} component='img' sx={{borderRadius: '5px'}} />
@@ -35,10 +35,10 @@ const CardList: FC<Props> = ({ editable }) => {
                 <Box display='flex' flexDirection='column' >
                     <Typography variant='body1'> { product.title }</Typography>
                     <Typography variant='body1'>Talle <strong>M</strong></Typography>
-                 {
+                 {/* {
                      editable ? 
                      <ItemCounter /> : <Typography variant='h5'>3</Typography>
-                 }
+                 } */}
 
                 </Box>
                </Grid>
