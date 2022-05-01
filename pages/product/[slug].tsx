@@ -10,33 +10,39 @@ import { GetStaticProps, GetStaticPaths } from "next";
 // - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from "next";
 import { dbProducts } from "../../database";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ICartProduct } from "../../interface/cart";
 import { ISizes } from "../../interface/products";
+import { CartContext } from "../../context/cart/CartContext";
+import { useRouter } from 'next/router';
 
 interface Props {
   product: IProduct;
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+
+  const router = useRouter();
+  const { addProductTocart } = useContext(CartContext);
+
   const [selectedSize, setSelectedSize] = useState<ISizes>();
   const [currentQuantity, setCurrentQuantity] = useState(1);
 
-
-  const addCart = () =>{
-    console.log('currentQuantity', currentQuantity);
-    console.log('selectedSize', selectedSize);
-  }
-  // const [tempCartProduct, setTemCartProduct] = useState<ICartProduct>({
-  //   _id: product._id,
-  //   image: product.images[0],
-  //   price: product.price,
-  //   size: '',
-  //   slug: product.slug,
-  //   title: product.title,
-  //   gender: product.gender,
-  //   quantity: 1
-  // })
+  const addCart = () => {
+    if (selectedSize) {
+      addProductTocart({
+        _id: product._id,
+        image: product.images[0],
+        price: product.price,
+        size: selectedSize,
+        slug: product.slug,
+        title: product.title,
+        gender: product.gender,
+        quantity: currentQuantity,
+      });
+      router.push('/cart');
+    }
+  };
 
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
@@ -55,18 +61,23 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
-              <ItemCounter 
-              currentValue={currentQuantity}
-              maxValue={product.inStock}
-              onSetCounter={setCurrentQuantity} />
+              <ItemCounter
+                currentValue={currentQuantity}
+                maxValue={product.inStock}
+                onSetCounter={setCurrentQuantity}
+              />
               <SizeSelector
                 sizes={product.sizes}
                 selectedSize={selectedSize}
-                onSelectedSize={ setSelectedSize }
+                onSelectedSize={setSelectedSize}
               />
             </Box>
             {product.inStock > 0 ? (
-              <Button onClick={addCart} color="secondary" className="circular-btn">
+              <Button
+                onClick={addCart}
+                color="secondary"
+                className="circular-btn"
+              >
                 {selectedSize ? "Agregar al carrito" : "Seleccione una talla"}
               </Button>
             ) : (
