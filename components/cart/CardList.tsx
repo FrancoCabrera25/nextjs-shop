@@ -12,24 +12,33 @@ import { FC, useContext } from "react";
 import { initialData } from "../../database/products";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context/cart/CartContext";
-import { ICartProduct } from '../../interface/cart';
+import { ICartProduct } from "../../interface/cart";
 
 interface Props {
   editable?: boolean;
 }
 
 const CardList: FC<Props> = ({ editable }) => {
-  const { cart, upddateCartQuantity } = useContext(CartContext);
+  const { cart, upddateCartQuantity, removeCartProduct } =
+    useContext(CartContext);
 
-  const changeQuantityValue = (product: ICartProduct, newQuantityValue: number) =>{
-      product.quantity = newQuantityValue;
-      upddateCartQuantity(product);
-  }
+  const changeQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number
+  ) => {
+    product.quantity = newQuantityValue;
+    upddateCartQuantity(product);
+  };
 
   return (
     <>
       {cart.map((product) => (
-        <Grid container key={product.slug + product.size } spacing={2} sx={{ mb: 1 }}>
+        <Grid
+          container
+          key={product.slug + product.size}
+          spacing={2}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
             <NextLink href={`/product/${product.slug}`} passHref>
               <Link>
@@ -43,7 +52,7 @@ const CardList: FC<Props> = ({ editable }) => {
               </Link>
             </NextLink>
           </Grid>
-          <Grid item xs={7} sx={{ sx: { mt: 1 }, sm:{ mt: 4 } }}>
+          <Grid item xs={7} sx={{ sx: { mt: 1 }, sm: { mt: 4 } }}>
             <Box display="flex" flexDirection="column">
               <Typography variant="body1"> {product.title}</Typography>
               <Typography variant="body1">
@@ -53,7 +62,9 @@ const CardList: FC<Props> = ({ editable }) => {
                 <ItemCounter
                   currentValue={product.quantity}
                   maxValue={10}
-                  onSetCounter={(newValue) => changeQuantityValue(product, newValue)}
+                  onSetCounter={(newValue) =>
+                    changeQuantityValue(product, newValue)
+                  }
                 />
               ) : (
                 <Typography variant="h5">
@@ -69,11 +80,15 @@ const CardList: FC<Props> = ({ editable }) => {
             display="flex"
             alignItems="center"
             flexDirection="column"
-            sx={{ sx: { mt: 1 }, sm:{ mt: 4 } }}
+            sx={{ sx: { mt: 1 }, sm: { mt: 4 } }}
           >
             <Typography variant="subtitle1"> $ {product.price}</Typography>
             {editable && (
-              <Button variant="text" color="secondary">
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => removeCartProduct(product)}
+              >
                 Eliminar
               </Button>
             )}
