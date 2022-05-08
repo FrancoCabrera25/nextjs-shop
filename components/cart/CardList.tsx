@@ -12,18 +12,24 @@ import { FC, useContext } from "react";
 import { initialData } from "../../database/products";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context/cart/CartContext";
+import { ICartProduct } from '../../interface/cart';
 
 interface Props {
   editable?: boolean;
 }
 
 const CardList: FC<Props> = ({ editable }) => {
-  const { cart } = useContext(CartContext);
+  const { cart, upddateCartQuantity } = useContext(CartContext);
+
+  const changeQuantityValue = (product: ICartProduct, newQuantityValue: number) =>{
+      product.quantity = newQuantityValue;
+      upddateCartQuantity(product);
+  }
 
   return (
     <>
       {cart.map((product) => (
-        <Grid container key={product.slug} spacing={2} sx={{ mb: 1 }}>
+        <Grid container key={product.slug + product.size } spacing={2} sx={{ mb: 1 }}>
           <Grid item xs={3}>
             <NextLink href={`/product/${product.slug}`} passHref>
               <Link>
@@ -47,7 +53,7 @@ const CardList: FC<Props> = ({ editable }) => {
                 <ItemCounter
                   currentValue={product.quantity}
                   maxValue={10}
-                  onSetCounter={() => {}}
+                  onSetCounter={(newValue) => changeQuantityValue(product, newValue)}
                 />
               ) : (
                 <Typography variant="h5">

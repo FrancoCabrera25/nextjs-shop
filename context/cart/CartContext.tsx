@@ -6,6 +6,7 @@ interface ContextProps {
     cart: ICartProduct[];
 
     addProductTocart: (product: ICartProduct) => void;
+    upddateCartQuantity: (product: ICartProduct) => void
 }
 
 
