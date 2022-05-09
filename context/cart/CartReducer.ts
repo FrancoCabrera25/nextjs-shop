@@ -5,7 +5,16 @@ type UiActionType =
   | { type: "[CART] - LOAD CART FROM COOKIES"; payload: ICartProduct[] }
   | { type: "[CART] - UPDATE CART"; payload: ICartProduct[] }
   | { type: "[CART] - CHANGE CART QUANTITY"; payload: ICartProduct }
-  | { type: "[CART] - REMOVE PRODUCT IN CART"; payload: ICartProduct };
+  | { type: "[CART] - REMOVE PRODUCT IN CART"; payload: ICartProduct }
+  | {
+      type: "[CART] - UPDATE SUMMARY";
+      payload: {
+        numberOfItems: number;
+        subTotal: number;
+        tax: number;
+        total: number;
+      };
+    };
 export const cartReducer = (
   state: CartState,
   action: UiActionType
@@ -15,6 +24,7 @@ export const cartReducer = (
       return {
         ...state,
         cart: action.payload,
+        initialized: true,
       };
     case "[CART] - UPDATE CART":
       return {
@@ -46,6 +56,11 @@ export const cartReducer = (
             )
         ),
       };
+    case '[CART] - UPDATE SUMMARY': 
+    return{
+      ...state,
+      ...action.payload,
+    }
     default:
       return state;
   }
