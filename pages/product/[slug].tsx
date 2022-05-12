@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
 import { SizeSelector } from "../../components/products";
 import { ItemCounter, SlidesShow } from "../../components/ui";
-import { initialData } from "../../database/products";
+import { initialData } from "../../database/seed-data";
 import { IProduct } from "../../interface";
 import { GetStaticProps, GetStaticPaths } from "next";
 // You should use getServerSideProps when:

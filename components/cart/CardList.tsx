@@ -9,7 +9,6 @@ import {
   Typography,
 } from "@mui/material";
 import { FC, useContext } from "react";
-import { initialData } from "../../database/products";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context/cart/CartContext";
 import { ICartProduct } from "../../interface/cart";

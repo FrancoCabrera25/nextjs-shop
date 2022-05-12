@@ -21,14 +21,14 @@ const OrderSummary = () => {
       <Typography>subTotal</Typography>
      </Grid>
      <Grid item xs={6}  display='flex' justifyContent='end'>
-      <Typography>{currency.format(subTotal)}</Typography>
+      <Typography>{ subTotal && currency.format(subTotal)}</Typography>
      </Grid>
 
      <Grid item xs={6}>
       <Typography>Impuestos({ Number(process.env.NEXT_PUBLIC_TAX_RATE) * 100 }%)</Typography>
      </Grid>
      <Grid item xs={6}  display='flex' justifyContent='end'>
-      <Typography>{currency.format(tax)}</Typography>
+      <Typography>{ tax  && currency.format(tax)}</Typography>
      </Grid>
 
      <Grid item xs={6} sx={{ mt: 2}}>
@@ -36,7 +36,7 @@ const OrderSummary = () => {
      </Grid>
 
      <Grid item xs={6} sx={{ mt: 2 }}  display='flex' justifyContent='end'>
-      <Typography variant='subtitle1'>{currency.format(total)}</Typography>
+      <Typography variant='subtitle1'> { total && currency.format(total)}</Typography>
      </Grid>
 
    </Grid>
