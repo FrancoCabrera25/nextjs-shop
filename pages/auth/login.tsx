@@ -7,7 +7,9 @@ import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { shopApi } from "../../api";
 import { ErrorOutlined } from "@mui/icons-material";
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../../context/auth/AuthContext';
+import { useRouter } from 'next/router';
 
 type FormInputs = {
   email: string;
@@ -15,6 +17,8 @@ type FormInputs = {
 };
 
 const LoginPage: NextPage = () => {
+  const router = useRouter();
+  const { login } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
   const {
     register,
@@ -25,16 +29,18 @@ const LoginPage: NextPage = () => {
 
   const onLoginUser = async ({ email, password }: FormInputs) => {
     setShowError(false);
-    try {
+    const validLogin = await login(email, password);
 
-      const { data } = await shopApi.post("/user/login", { email, password });
-      const { token, user } = data;
-      console.log({ token, user });
-    } catch (error) {
+    if(!validLogin){
       setShowError(true);
       setTimeout(()=>{setShowError(false)},3000);
+
+      return;
     }
-  };
+
+    router.replace('/');
+  }
+
   return (
     <AuthLayout title="Login">
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
