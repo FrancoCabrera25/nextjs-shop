@@ -1,12 +1,14 @@
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from "@mui/material";
 import { NextPage } from "next";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthLayout } from "../../components/layouts";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { shopApi } from "../../api";
 import { ErrorOutlined } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { AuthContext } from "../../context";
 
 type FormInputs = {
   name: string;
@@ -15,7 +17,10 @@ type FormInputs = {
 };
 
 const RegisterPage: NextPage = () => {
+  const router = useRouter();
+  const { registerUser } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
     handleSubmit,
@@ -25,20 +30,22 @@ const RegisterPage: NextPage = () => {
 
   const onRegisterForm = async ({ name, email, password }: FormInputs) => {
     setShowError(false);
-    try {
-      const { data } = await shopApi.post("/user/register", {
-        name,
-        email,
-        password,
-      });
-      const { token, user } = data;
-      console.log({ token, user });
-    } catch (erorr) {
+
+    const {hasError, message} = await registerUser(name, email, password);
+
+    if(hasError){
+      console.log('message', message);
       setShowError(true);
+      setErrorMessage(message);
       setTimeout(() => {
         setShowError(false);
       }, 3000);
+
+      return;
     }
+
+    router.replace('/');
+
   };
 
   return (
@@ -58,7 +65,7 @@ const RegisterPage: NextPage = () => {
               <Typography variant="h1" component="h1">
                 Crear Cuenta
               </Typography>
-              <Chip sx={{ mt:2, display: showError ? 'flex' : 'none' }} label='Ups Ocurrio un error' color='error' icon={ <ErrorOutlined />} />
+              <Chip sx={{ mt:2, display: showError ? 'flex' : 'none' }} label={errorMessage} color='error' icon={ <ErrorOutlined />} />
             </Grid>
             <Grid item xs={12}>
               <TextField
