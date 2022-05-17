@@ -4,6 +4,7 @@ import { IUser } from "../../interface";
 import shopApi from "../../api/shopApi";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useRouter } from "next/router";
 export interface AuthState {
   isLoggedIn: boolean;
   user?: IUser;
@@ -17,7 +18,7 @@ const AUTH_INITIAL_STATE: AuthState = {
 type Props = {};
 export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
-
+  const router = useRouter();
 
   useEffect(()=>{
       checkToken();
@@ -53,6 +54,12 @@ export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
       return false;
     }
   };
+  
+  const logout = () => {
+    Cookies.remove('cart');
+    Cookies.remove('token');
+    router.reload();
+  }
 
   const registerUser = async (
     name: string,
@@ -97,7 +104,8 @@ export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
         ...state,
 
         login,
-        registerUser
+        registerUser,
+        logout
       }}
     >
       {children}

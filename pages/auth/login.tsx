@@ -37,8 +37,8 @@ const LoginPage: NextPage = () => {
 
       return;
     }
-
-    router.replace('/');
+    const destination = router.query.p?.toString() || '/';
+    router.replace(destination);
   }
 
   return (
