@@ -24,7 +24,7 @@ export const cartReducer = (
       return {
         ...state,
         cart: action.payload,
-        initialized: true,
+        isLoaded: true,
       };
     case "[CART] - UPDATE CART":
       return {

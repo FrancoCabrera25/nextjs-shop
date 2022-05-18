@@ -5,7 +5,7 @@ import Cookie from "js-cookie";
 
 export interface CartState {
   cart: ICartProduct[];
-  initialized: boolean;
+  isLoaded: boolean;
   numberOfItems: number;
   subTotal: number;
   tax: number;
@@ -24,7 +24,7 @@ export interface CartState {
 
 const UI_INITIAL_STATE: CartState = {
   cart: [],
-  initialized: false,
+  isLoaded: false,
   numberOfItems: 0,
   subTotal: 0,
   tax: 0,
@@ -41,7 +41,7 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (state.initialized) {
+    if (state.isLoaded) {
       Cookie.set("cart", JSON.stringify(state.cart));
     }
   }, [state.cart]);
