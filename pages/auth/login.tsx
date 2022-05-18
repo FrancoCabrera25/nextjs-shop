@@ -1,4 +1,12 @@
-import { Box, Button, Chip, Grid, Link, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { NextPage } from "next";
 import React from "react";
 import { AuthLayout } from "../../components/layouts";
@@ -7,9 +15,9 @@ import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { shopApi } from "../../api";
 import { ErrorOutlined } from "@mui/icons-material";
-import { useState, useContext } from 'react';
-import { AuthContext } from '../../context/auth/AuthContext';
-import { useRouter } from 'next/router';
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/auth/AuthContext";
+import { useRouter } from "next/router";
 
 type FormInputs = {
   email: string;
@@ -31,15 +39,17 @@ const LoginPage: NextPage = () => {
     setShowError(false);
     const validLogin = await login(email, password);
 
-    if(!validLogin){
+    if (!validLogin) {
       setShowError(true);
-      setTimeout(()=>{setShowError(false)},3000);
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
 
       return;
     }
-    const destination = router.query.p?.toString() || '/';
+    const destination = router.query.p?.toString() || "/";
     router.replace(destination);
-  }
+  };
 
   return (
     <AuthLayout title="Login">
@@ -51,14 +61,19 @@ const LoginPage: NextPage = () => {
               xs={12}
               display="flex"
               justifyContent="center"
-              flexDirection='column'
-              alignItems='center'
+              flexDirection="column"
+              alignItems="center"
               sx={{ my: 2 }}
             >
               <Typography variant="h1" component="h1">
                 Iniciar Sesión
               </Typography>
-              <Chip sx={{ mt:2, display: showError ? 'flex' : 'none' }} label='los datos ingresados son incorrectos' color='error' icon={ <ErrorOutlined />} />
+              <Chip
+                sx={{ mt: 2, display: showError ? "flex" : "none" }}
+                label="los datos ingresados son incorrectos"
+                color="error"
+                icon={<ErrorOutlined />}
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -101,7 +116,14 @@ const LoginPage: NextPage = () => {
             </Grid>
 
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/register" passHref>
+              <NextLink
+                href={
+                  router.query.p
+                    ? `/auth/register?p=${router.query.p}`
+                    : `/auth/register`
+                }
+                passHref
+              >
                 <Link underline="always">¿No tienes cuenta?</Link>
               </NextLink>
             </Grid>
