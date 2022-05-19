@@ -12,8 +12,13 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import { CardList, OrderSummary } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts";
+import { useContext } from 'react';
+import { CartContext } from '../../context/cart/CartContext';
 
 const SummaryPage: NextPage = () => {
+
+   const { shippingAddress } = useContext(CartContext);
+
   return (
     <ShopLayout title="Resumen de compra" pageDescription="resumen de la orden">
       <Typography variant="h1" component="h1">

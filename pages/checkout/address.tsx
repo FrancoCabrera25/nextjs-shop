@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ShopLayout } from "../../components/layouts";
 import { countries } from "../../utils";
+import { useContext } from 'react';
+import { CartContext } from "../../context";
 
 type FormInputs = {
   firstName: string;
@@ -42,6 +44,7 @@ const getAddressFromCookies = () => {
 const AddressPage: NextPage = () => {
   const currentAddress = getAddressFromCookies();
   const router = useRouter();
+  const { updateShippingAddress } = useContext(CartContext);
 
   const {
     register,
@@ -64,9 +67,7 @@ const AddressPage: NextPage = () => {
   });
 
   const onAddress = (data: FormInputs) => {
-    console.log(data);
-    Cookies.set("address", JSON.stringify(data));
-
+    updateShippingAddress(data);
     router.push("/checkout/summary");
   };
 
@@ -160,7 +161,7 @@ const AddressPage: NextPage = () => {
                 select
                 variant="filled"
                 label="País"
-                defaultValue
+                defaultValue = { countries[0].code }
                 {...register("country", {
                   required: "Debe seleccionar un país",
                 })}

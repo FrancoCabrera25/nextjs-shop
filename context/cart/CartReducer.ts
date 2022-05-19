@@ -1,5 +1,6 @@
 import { CartState } from "./";
 import { ICartProduct } from "../../interface/cart";
+import { ShippingAddress } from './CartProvider';
 
 type UiActionType =
   | { type: "[CART] - LOAD CART FROM COOKIES"; payload: ICartProduct[] }
@@ -14,7 +15,10 @@ type UiActionType =
         tax: number;
         total: number;
       };
-    };
+    }
+  | { type: "[CART] - LOAD SHIPPING ADDRESS"; payload: ShippingAddress }  
+  | { type: "[CART] - UPDATE SHIPPING ADDRESS"; payload: ShippingAddress }  
+
 export const cartReducer = (
   state: CartState,
   action: UiActionType
@@ -61,6 +65,13 @@ export const cartReducer = (
       ...state,
       ...action.payload,
     }
+    
+    case '[CART] - UPDATE SHIPPING ADDRESS':
+    case '[CART] - LOAD SHIPPING ADDRESS':
+      return{
+        ...state,
+        shippingAddress: action.payload,
+      }
     default:
       return state;
   }
