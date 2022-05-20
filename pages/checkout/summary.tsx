@@ -14,10 +14,17 @@ import { CardList, OrderSummary } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts";
 import { useContext } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
+import { countries } from "../../utils";
 
 const SummaryPage: NextPage = () => {
 
-   const { shippingAddress } = useContext(CartContext);
+   const { shippingAddress, numberOfItems } = useContext(CartContext);
+
+   if(!shippingAddress){
+     return (<></>)
+   }
+
+   const {firstName, lastName, address, address2 = '', city, country, phone, zipCode}  = shippingAddress;
 
   return (
     <ShopLayout title="Resumen de compra" pageDescription="resumen de la orden">
@@ -32,7 +39,7 @@ const SummaryPage: NextPage = () => {
         <Grid item xs={12} sm={5}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h2">Resumen (3 productos)</Typography>
+              <Typography variant="h2">Resumen ({numberOfItems }{ numberOfItems === 1 ? 'producto' : 'productos' } )</Typography>
               <Divider sx={{ my: 1 }} />
               <Box display="flex" justifyContent='space-between'>
               <Typography variant="subtitle1">Dirección de entrega</Typography>
@@ -41,10 +48,11 @@ const SummaryPage: NextPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>Franco Cabrera</Typography>
-              <Typography>Dirección</Typography>
-              <Typography>Dirección</Typography>
-              <Typography>Dirección</Typography>
+              <Typography>{ firstName } { lastName } </Typography>
+              <Typography>{ address } { address2 ? `, ${address2}` : '' }</Typography>
+              <Typography>{ city }, { zipCode } </Typography>
+              <Typography>{ countries.find(c => c.code  === country)?.name } </Typography>
+              <Typography>{ phone } </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="end">

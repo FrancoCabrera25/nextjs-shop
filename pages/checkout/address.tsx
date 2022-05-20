@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ShopLayout } from "../../components/layouts";
 import { countries } from "../../utils";
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../../context";
 
 type FormInputs = {
@@ -32,39 +32,41 @@ type FormInputs = {
 const getAddressFromCookies = () => {
   const data: FormInputs = Cookies.get("address")
     ? JSON.parse(Cookies.get("address")!)
-    : null;
+    : {
+        firstName: "",
+        lastName: "",
+        address: "",
+        address2: "",
+        zipCode: "",
+        city: "",
+        country: "",
+        phone: "",
+      };
 
-  if (data) {
-    return data;
-  }
-
-  return null;
+ return data;
 };
 
 const AddressPage: NextPage = () => {
-  const currentAddress = getAddressFromCookies();
-  const router = useRouter();
-  const { updateShippingAddress } = useContext(CartContext);
+  //const currentAddress = getAddressFromCookies();
+
+  const [defaultCountry, setDefaultCountry] = useState("");
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<FormInputs>({
-    defaultValues: currentAddress
-      ? currentAddress
-      : {
-          firstName: "",
-          lastName: "",
-          address: "",
-          address2: "",
-          zipCode: "",
-          city: "",
-          country: "",
-          phone: "",
-        },
-  });
+  } = useForm<FormInputs>();
+
+  useEffect(() => {
+    const addressFromCookies = getAddressFromCookies();
+    reset(addressFromCookies);
+    setDefaultCountry(addressFromCookies.country);
+  }, [reset, getAddressFromCookies]);
+
+  const router = useRouter();
+  const { updateShippingAddress } = useContext(CartContext);
 
   const onAddress = (data: FormInputs) => {
     updateShippingAddress(data);
@@ -157,11 +159,13 @@ const AddressPage: NextPage = () => {
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
+              
               <TextField
+                key={defaultCountry}
                 select
                 variant="filled"
                 label="País"
-                defaultValue = { countries[0].code }
+                defaultValue={ defaultCountry }
                 {...register("country", {
                   required: "Debe seleccionar un país",
                 })}
