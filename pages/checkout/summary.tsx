@@ -12,14 +12,22 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import { CardList, OrderSummary } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts";
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
 import { countries } from "../../utils";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const SummaryPage: NextPage = () => {
 
    const { shippingAddress, numberOfItems } = useContext(CartContext);
-
+   const router = useRouter();
+    useEffect(() => {
+     if(!Cookies.get('address')){
+      router.push('/checkout/address');
+     }    
+    }, [ router ])
+    
    if(!shippingAddress){
      return (<></>)
    }
@@ -28,7 +36,7 @@ const SummaryPage: NextPage = () => {
 
   return (
     <ShopLayout title="Resumen de compra" pageDescription="resumen de la orden">
-      <Typography variant="h1" component="h1">
+      <Typography variant="h1" component="h1" sx= { { mb: 2 } }>
         Resumen de la orden
       </Typography>
       <Grid container>

@@ -6,6 +6,7 @@ import { FullScreenLoading } from "../components/ui";
 import { useProducts } from "../hooks";
 
 const HomePage: NextPage = () => {
+
   const { products, isLoading, isError } = useProducts("/products");
 
   return (

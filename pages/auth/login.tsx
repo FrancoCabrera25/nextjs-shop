@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   Grid,
   Link,
   TextField,
@@ -15,9 +16,11 @@ import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { shopApi } from "../../api";
 import { ErrorOutlined } from "@mui/icons-material";
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from "../../context/auth/AuthContext";
 import { useRouter } from "next/router";
+import { getSession, signIn, getProviders } from "next-auth/react";
+import { GetServerSideProps } from "next";
 
 type FormInputs = {
   email: string;
@@ -26,8 +29,9 @@ type FormInputs = {
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
-  const { login } = useContext(AuthContext);
+  // const { login } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
+  const [providers, setProviders] = useState<any>({});
   const {
     register,
     handleSubmit,
@@ -35,20 +39,27 @@ const LoginPage: NextPage = () => {
     formState: { errors },
   } = useForm<FormInputs>();
 
+  useEffect(() => {
+    getProviders().then((prov) => {
+      setProviders(prov);
+    });
+  }, []);
+
   const onLoginUser = async ({ email, password }: FormInputs) => {
     setShowError(false);
-    const validLogin = await login(email, password);
+    await signIn("credentials", { email, password });
+    // const validLogin = await login(email, password);
 
-    if (!validLogin) {
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
+    // if (!validLogin) {
+    //   setShowError(true);
+    //   setTimeout(() => {
+    //     setShowError(false);
+    //   }, 3000);
 
-      return;
-    }
-    const destination = router.query.p?.toString() || "/";
-    router.replace(destination);
+    //   return;
+    // }
+    // const destination = router.query.p?.toString() || "/";
+    // router.replace(destination);
   };
 
   return (
@@ -127,11 +138,59 @@ const LoginPage: NextPage = () => {
                 <Link underline="always">¿No tienes cuenta?</Link>
               </NextLink>
             </Grid>
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              justifyContent="end"
+              flexDirection="column"
+            >
+              <Divider sx={{ width: "100%", mb: 2 }} />
+              {Object.values(providers).map((provider: any) => {
+                if (provider.id === "credentials")
+                  return <div key={provider.id}></div>;
+
+                return (
+                  <Button
+                    key={provider.id}
+                    variant="outlined"
+                    fullWidth
+                    color="primary"
+                    sx={{ mb: 1 }}
+                    onClick={() => signIn(provider.id)}
+                  >
+                    {provider.name}
+                  </Button>
+                );
+              })}
+            </Grid>
           </Grid>
         </Box>
       </form>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+
+  const { p = "/" } = query;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default LoginPage;
