@@ -1,6 +1,7 @@
 import { CartState } from "./";
 import { ICartProduct } from "../../interface/cart";
-import { ShippingAddress } from './CartProvider';
+import { ShippingAddress } from "../../interface";
+
 
 type UiActionType =
   | { type: "[CART] - LOAD CART FROM COOKIES"; payload: ICartProduct[] }

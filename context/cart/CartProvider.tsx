@@ -1,18 +1,8 @@
 import { FC, useReducer, PropsWithChildren, useEffect } from "react";
-import { ICartProduct } from "../../interface";
+import { ICartProduct, IOrder, ShippingAddress } from "../../interface";
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
-
-export interface ShippingAddress {
-  firstName: string;
-  lastName: string;
-  address: string;
-  address2?: string;
-  zipCode: string;
-  city: string;
-  country: string;
-  phone: string;
-}
+import { shopApi } from "../../api";
 
 export interface CartState {
   cart: ICartProduct[];
@@ -46,9 +36,9 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   // load shipping address
   useEffect(() => {
     const data: ShippingAddress = Cookie.get("address")
-    ? JSON.parse(Cookie.get("address")!)
-    : undefined;
-    dispatch({ type: '[CART] - LOAD SHIPPING ADDRESS', payload: data });
+      ? JSON.parse(Cookie.get("address")!)
+      : undefined;
+    dispatch({ type: "[CART] - LOAD SHIPPING ADDRESS", payload: data });
   }, []);
 
   useEffect(() => {
@@ -113,10 +103,35 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
     dispatch({ type: "[CART] - REMOVE PRODUCT IN CART", payload: product });
   };
 
-  const updateShippingAddress = (shippingAddress: ShippingAddress) =>{
+  const updateShippingAddress = (shippingAddress: ShippingAddress) => {
     Cookie.set("address", JSON.stringify(shippingAddress));
-    dispatch({ type: '[CART] - UPDATE SHIPPING ADDRESS', payload: shippingAddress});
-  }
+    dispatch({
+      type: "[CART] - UPDATE SHIPPING ADDRESS",
+      payload: shippingAddress,
+    });
+  };
+
+  const createOrder = async () => {
+    try {
+      if(!state.shippingAddress){
+        throw new Error('No hay dirección de entrega');
+      }
+
+      const body: IOrder = {
+        orderItem: state.cart,
+        shippingAddres: state.shippingAddress,
+        numberOfItems: state.numberOfItems,
+        subTotal: state.subTotal,
+        tax: state.tax,
+        total: state.total,
+        isPaid: false,
+      }
+
+      const {  data } = await shopApi.post('/orders', body);
+
+      console.log('data', data);
+    } catch (error) {}
+  };
 
   return (
     <CartContext.Provider
@@ -126,7 +141,8 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
         addProductTocart,
         upddateCartQuantity,
         removeCartProduct,
-        updateShippingAddress
+        updateShippingAddress,
+        createOrder
       }}
     >
       {children}
