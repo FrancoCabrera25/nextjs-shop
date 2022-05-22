@@ -12,12 +12,14 @@ import { FC, useContext } from "react";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context/cart/CartContext";
 import { ICartProduct } from "../../interface/cart";
+import { IOrderItem } from "../../interface";
 
 interface Props {
   editable?: boolean;
+  products?: IOrderItem[];
 }
 
-const CardList: FC<Props> = ({ editable }) => {
+const CardList: FC<Props> = ({ editable, products }) => {
   const { cart, upddateCartQuantity, removeCartProduct } =
     useContext(CartContext);
 
@@ -29,9 +31,11 @@ const CardList: FC<Props> = ({ editable }) => {
     upddateCartQuantity(product);
   };
 
+   const productToShow = products ? products : cart;
+
   return (
     <>
-      {cart.map((product) => (
+      {productToShow.map((product) => (
         <Grid
           container
           key={product.slug + product.size}
@@ -62,7 +66,7 @@ const CardList: FC<Props> = ({ editable }) => {
                   currentValue={product.quantity}
                   maxValue={10}
                   onSetCounter={(newValue) =>
-                    changeQuantityValue(product, newValue)
+                    changeQuantityValue(product as ICartProduct, newValue)
                   }
                 />
               ) : (
@@ -86,7 +90,7 @@ const CardList: FC<Props> = ({ editable }) => {
               <Button
                 variant="text"
                 color="secondary"
-                onClick={() => removeCartProduct(product)}
+                onClick={() => removeCartProduct(product as ICartProduct)}
               >
                 Eliminar
               </Button>

@@ -1,12 +1,24 @@
+import { SignalCellularNullRounded } from "@mui/icons-material";
 import { Grid, Typography } from "@mui/material"
-import { useContext } from 'react';
+import { FC, useContext } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
 import { currency } from "../../utils";
 
 
-const OrderSummary = () => {
+interface Props {
+  orderValues?: {
+    total: number;
+     tax: number; 
+     numberOfItems: number; 
+     subTotal: number;
+  }
+}
+
+const OrderSummary:FC<Props> = ({ orderValues  }) => {
 
  const { total, tax, numberOfItems, subTotal } = useContext(CartContext);
+
+ const summaryValues = orderValues ? orderValues : { total, tax, numberOfItems, subTotal };
   
   return (
    <Grid container>
@@ -15,20 +27,20 @@ const OrderSummary = () => {
       <Typography>productos</Typography>
      </Grid>
      <Grid item   xs={6} display='flex' justifyContent='end' >
-      <Typography>{numberOfItems}</Typography>
+      <Typography>{summaryValues.numberOfItems}</Typography>
      </Grid>
      <Grid item xs={6}>
       <Typography>subTotal</Typography>
      </Grid>
      <Grid item xs={6}  display='flex' justifyContent='end'>
-      <Typography>{ subTotal && currency.format(subTotal)}</Typography>
+      <Typography>{ summaryValues  && currency.format(summaryValues.subTotal)}</Typography>
      </Grid>
 
      <Grid item xs={6}>
       <Typography>Impuestos({ Number(process.env.NEXT_PUBLIC_TAX_RATE) * 100 }%)</Typography>
      </Grid>
      <Grid item xs={6}  display='flex' justifyContent='end'>
-      <Typography>{ tax  && currency.format(tax)}</Typography>
+      <Typography>{ summaryValues && summaryValues.tax && currency.format(summaryValues.tax)}</Typography>
      </Grid>
 
      <Grid item xs={6} sx={{ mt: 2}}>
@@ -36,7 +48,7 @@ const OrderSummary = () => {
      </Grid>
 
      <Grid item xs={6} sx={{ mt: 2 }}  display='flex' justifyContent='end'>
-      <Typography variant='subtitle1'> { total && currency.format(total)}</Typography>
+      <Typography variant='subtitle1'> { summaryValues && summaryValues.total && currency.format(summaryValues.total)}</Typography>
      </Grid>
 
    </Grid>
