@@ -74,7 +74,7 @@ const SideMenu = () => {
                 <ListItemText primary={"Perfil"} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem button onClick={() => navigateTo("/orders/history")}>
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
@@ -124,7 +124,10 @@ const SideMenu = () => {
               <ListItemText primary={"Salir"} />
             </ListItem>
           ) : (
-            <ListItem button onClick={ ()=> navigateTo(`/auth/login?p=${router.asPath}`)}>
+            <ListItem
+              button
+              onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+            >
               <ListItemIcon>
                 <VpnKeyOutlined />
               </ListItemIcon>

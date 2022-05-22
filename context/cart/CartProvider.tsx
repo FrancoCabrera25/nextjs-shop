@@ -3,6 +3,7 @@ import { ICartProduct, IOrder, ShippingAddress } from "../../interface";
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
 import { shopApi } from "../../api";
+import axios from "axios";
 
 export interface CartState {
   cart: ICartProduct[];
@@ -111,26 +112,46 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
     });
   };
 
-  const createOrder = async () => {
+  const createOrder = async (): Promise<{
+    hasError: boolean;
+    message: string;
+  }> => {
     try {
-      if(!state.shippingAddress){
-        throw new Error('No hay dirección de entrega');
+      if (!state.shippingAddress) {
+        throw new Error("No hay dirección de entrega");
       }
 
       const body: IOrder = {
-        orderItem: state.cart,
+        orderItems: state.cart,
         shippingAddres: state.shippingAddress,
         numberOfItems: state.numberOfItems,
         subTotal: state.subTotal,
         tax: state.tax,
         total: state.total,
         isPaid: false,
+      };
+
+      const { data } = await shopApi.post<IOrder>("/orders", body);
+
+      dispatch({ type: "[CART] - CLEAN CART " });
+
+      return {
+        hasError: false,
+        message: data._id!,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const { message = "" } = error.response?.data;
+        return {
+          hasError: true,
+          message,
+        };
       }
-
-      const {  data } = await shopApi.post('/orders', body);
-
-      console.log('data', data);
-    } catch (error) {}
+      return {
+        hasError: true,
+        message: "Ocurrio un error inesperado",
+      };
+    }
   };
 
   return (
@@ -142,7 +163,7 @@ export const CartProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
         upddateCartQuantity,
         removeCartProduct,
         updateShippingAddress,
-        createOrder
+        createOrder,
       }}
     >
       {children}

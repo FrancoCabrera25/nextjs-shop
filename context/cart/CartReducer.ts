@@ -19,6 +19,7 @@ type UiActionType =
     }
   | { type: "[CART] - LOAD SHIPPING ADDRESS"; payload: ShippingAddress }  
   | { type: "[CART] - UPDATE SHIPPING ADDRESS"; payload: ShippingAddress }  
+  | { type: "[CART] - CLEAN CART " }
 
 export const cartReducer = (
   state: CartState,
@@ -73,6 +74,16 @@ export const cartReducer = (
         ...state,
         shippingAddress: action.payload,
       }
+
+    case '[CART] - CLEAN CART ': 
+     return{
+       ...state,
+       cart: [],
+       numberOfItems: 0,
+       subTotal: 0,
+       total: 0,
+       tax: 0,
+     }  
     default:
       return state;
   }

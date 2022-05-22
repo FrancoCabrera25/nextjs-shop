@@ -2,7 +2,7 @@ import { IUser } from "./user";
 export interface IOrder {
   _id?: string;
   user?: IUser | string;
-  orderItem: IOrderItem[];
+  orderItems: IOrderItem[];
   shippingAddres: ShippingAddress;
   paymentResult?: string;
   numberOfItems: number;
