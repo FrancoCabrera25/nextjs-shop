@@ -79,6 +79,7 @@ interface Props {
 //TODO: REFACTORIZAR Y PASAR A COMPONENTES ESTE PAGINA
 
 const HistoryPage: NextPage<Props> = ({ orders }) => {
+  console.log('orders', orders);
   const rows = orders.map((order, index) => ({
     id: index,
     fullname: `${order.shippingAddres.firstName} ${order.shippingAddres.lastName}`,
@@ -115,7 +116,7 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
           />
         </Grid>
         <Grid item xs={12} sx={{  display: { xs: "flex", md: "none" }, }}>
-          <Grid container  xs={12} spacing={2}>
+          <Grid container spacing={2}>
             {rows.map((row) => (
               <Grid item key={row.orderId} xs={12}  sm={6}>
                 <Card>
