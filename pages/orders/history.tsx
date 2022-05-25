@@ -79,7 +79,7 @@ interface Props {
 //TODO: REFACTORIZAR Y PASAR A COMPONENTES ESTE PAGINA
 
 const HistoryPage: NextPage<Props> = ({ orders }) => {
-  console.log('orders', orders);
+  console.log('order', orders);
   const rows = orders.map((order, index) => ({
     id: index,
     fullname: `${order.shippingAddres.firstName} ${order.shippingAddres.lastName}`,
