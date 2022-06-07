@@ -42,15 +42,15 @@ const AdminLayout: FC<PropsWithChildren<Props>> = ({
       >
         <Box display="flex" flexDirection="column">
           <Box display="flex" justifyContent="flex-start" alignItems="center">
-            <Typography sx={{ mr: 1 }} variant="h1" component="h1">
+         { icon && ( <Typography sx={{ mr: 1 }} variant="h1" component="h1">
               {icon}
-            </Typography>
+            </Typography>) }
             <Typography variant="h1" component="h1">
               {title}
             </Typography>
           </Box>
 
-          <Typography variant="h2" sx={{ mb: 1 }}>
+          <Typography variant="h2" sx={{ mb: 1, mt:1 }}>
             {subTitle}
           </Typography>
         </Box>
