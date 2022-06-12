@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { AdminLayout } from "../../../components/layouts";
 import {
@@ -31,6 +31,9 @@ import {
 } from "@mui/material";
 import { IProduct, ISizes, ITypes } from "../../../interface";
 import { useForm } from "react-hook-form";
+import { shopApi } from "../../../api";
+import Product from "../../../models/Product";
+import { useRouter } from "next/router";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
@@ -55,7 +58,10 @@ interface Props {
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newTagValue, setNewTagValue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -87,23 +93,44 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     };
   }, [watch, setValue]);
 
-  const onSubmit = (formData: FormData) => {
-    console.log(formData);
+  const onSubmit = async (formData: FormData) => {
+    if (formData.images.length < 2) {
+      //TODO: PONER UN SNACKBAR
+      return alert("Minimo 2 imagenes");
+    }
+    setIsSaving(true);
+
+    try {
+      const { data } = await shopApi({
+        url: "/admin/products",
+        method: formData._id ? "PUT" : "POST",
+        data: formData,
+      });
+
+      if (!formData._id) {
+        router.replace(`/admin/products/${formData.slug}`);
+      } else {
+        setIsSaving(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsSaving(false);
+    }
   };
 
   const onNewTag = () => {
     const newtag = newTagValue.trim().toLocaleLowerCase();
-    setNewTagValue('');
-    const currentTags = getValues('tags');
-    if(!currentTags.includes(newtag)){
+    setNewTagValue("");
+    const currentTags = getValues("tags");
+    if (!currentTags.includes(newtag)) {
       currentTags.push(newtag);
     }
-  }
+  };
   const onDeleteTag = (tag: string) => {
-     const updatedTags = getValues('tags').filter( t => t !== tag);
-     setValue('tags', updatedTags, {
-       shouldValidate: true,
-     })
+    const updatedTags = getValues("tags").filter((t) => t !== tag);
+    setValue("tags", updatedTags, {
+      shouldValidate: true,
+    });
   };
 
   const onChangeSize = (size: string) => {
@@ -124,6 +151,21 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     });
   };
 
+  const onFileSelected =({ target }: ChangeEvent<HTMLInputElement>) => {
+      if(target.files && target.files.length !== 0){
+      
+        try{
+             for (const file of target.files) {
+              const formData = new FormData();
+               console.log(file);
+             }
+        }catch( error ){
+
+        }
+      }
+ 
+  }
+
   return (
     <AdminLayout
       title={"Producto"}
@@ -137,6 +179,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             startIcon={<SaveOutlined />}
             sx={{ width: "150px" }}
             type="submit"
+            disabled={isSaving}
           >
             Guardar
           </Button>
@@ -159,7 +202,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             />
 
             <TextField
-              rows={4}
+              rows={6}
               label="Descripción"
               variant="filled"
               fullWidth
@@ -207,7 +250,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Tipo</FormLabel>
               <RadioGroup
                 row
-                value={getValues("type")}
+                value={getValues("type") || ""}
                 onChange={({ target }) =>
                   setValue("type", target.value as ITypes, {
                     shouldValidate: true,
@@ -229,7 +272,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Género</FormLabel>
               <RadioGroup
                 row
-                value={getValues("gender")}
+                value={getValues("gender") || ""}
                 onChange={({ target }) =>
                   setValue("gender", target.value, {
                     shouldValidate: true,
@@ -292,7 +335,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               onChange={({ target }) => {
                 setNewTagValue(target.value);
               }}
-              onKeyUp={({ code }) =>  code === 'Space' ? onNewTag(): undefined }
+              onKeyUp={({ code }) =>
+                code === "Space" ? onNewTag() : undefined
+              }
             />
 
             <Box
@@ -328,10 +373,18 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 fullWidth
                 startIcon={<UploadOutlined />}
                 sx={{ mb: 3 }}
+                onClick={() => fileInputRef.current?.click() }
               >
                 Cargar imagen
               </Button>
-
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/png, image/gif, image/jpeg"
+                style={{ display: "none" }}
+                onChange= { onFileSelected }
+              />
               <Chip
                 label="Es necesario al 2 imagenes"
                 color="error"
@@ -371,7 +424,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = "" } = query;
 
-  const product = await dbProducts.getProductBySlug(slug.toString());
+  let product: IProduct | null;
+
+  if (slug === "new") {
+    const tempProduct = JSON.parse(JSON.stringify(new Product()));
+    delete tempProduct._id;
+    tempProduct.images = ["img1.jpg", "img2.jpg"];
+    product = tempProduct;
+  } else {
+    product = await dbProducts.getProductBySlug(slug.toString());
+  }
 
   if (!product) {
     return {

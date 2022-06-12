@@ -1,12 +1,21 @@
-import { CategoryOutlined } from "@mui/icons-material";
+import { AddOutlined, CategoryOutlined } from "@mui/icons-material";
 import { NextPage } from "next";
 import { AdminLayout } from "../../../components/layouts";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import { CardMedia, Chip, Grid, Link, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Chip,
+  Grid,
+  Link,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import useSWR from "swr";
 import { IProduct } from "../../../interface";
 import { format } from "../../../utils/currency";
-import NextLink from 'next/link';
+import NextLink from "next/link";
 
 const columns: GridColDef[] = [
   {
@@ -31,9 +40,9 @@ const columns: GridColDef[] = [
     width: 500,
     renderCell: ({ row }: GridValueGetterParams) => {
       return (
-       <NextLink href={`/admin/products/${row.slug}`} passHref>
-         <Link underline="always">{row.title}</Link>
-       </NextLink>
+        <NextLink href={`/admin/products/${row.slug}`} passHref>
+          <Link underline="always">{row.title}</Link>
+        </NextLink>
       );
     },
   },
@@ -77,6 +86,16 @@ const ProductsPage: NextPage = () => {
       subTitle={"Mantenimiento de productos"}
       icon={<CategoryOutlined />}
     >
+      <Box display="flex" justifyContent="end" sx={{ mb: 2 }}>
+        <Button
+          startIcon={<AddOutlined />}
+          color="secondary"
+          href="/admin/products/new"
+          className='circular-btn'
+        >
+          Crear producto
+        </Button>
+      </Box>
       <Grid container className="fadeIn" display="flex" justifyContent="center">
         <Grid
           item
