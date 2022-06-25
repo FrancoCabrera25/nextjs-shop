@@ -152,21 +152,28 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   };
 
   const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
-      if(target.files && target.files.length !== 0){
-      
-        try{
-             for (const file of target.files) {
-              const formData = new FormData();
-              formData.append('file', file);
-              const { data } = await shopApi.post< {message: string}>('/admin/upload', formData);
-
-              console.log('data', data);
-             }
-        }catch( error ){
-
+    if (target.files && target.files.length !== 0) {
+      try {
+        for (const file of target.files) {
+          const formData = new FormData();
+          formData.append("file", file);
+          const { data } = await shopApi.post<{ message: string }>(
+            "/admin/upload",
+            formData
+          );
+          setValue("images", [...getValues("images"), data.message], {
+            shouldValidate: true,
+          });
+          console.log("data", data.message);
         }
-      }
- 
+      } catch (error) {}
+    }
+  };
+
+  const onDeleteImage = (image: string) => {
+    setValue("images", getValues("images").filter(img => img !== image), {
+      shouldValidate: true,
+    });
   }
 
   return (
@@ -376,7 +383,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 fullWidth
                 startIcon={<UploadOutlined />}
                 sx={{ mb: 3 }}
-                onClick={() => fileInputRef.current?.click() }
+                onClick={() => fileInputRef.current?.click()}
               >
                 Cargar imagen
               </Button>
@@ -386,26 +393,27 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 multiple
                 accept="image/png, image/gif, image/jpeg"
                 style={{ display: "none" }}
-                onChange= { onFileSelected }
+                onChange={onFileSelected}
               />
               <Chip
                 label="Es necesario al 2 imagenes"
                 color="error"
                 variant="outlined"
+                sx={{ display: getValues('images').length < 2 ? 'flex' : 'none' }}
               />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues('images').map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card sx={{ mt: 3 }}>
                       <CardMedia
                         component="img"
                         className="fadeIn"
-                        image={`/products/${img}`}
+                        image={ img }
                         alt={img}
                       />
                       <CardActions>
-                        <Button fullWidth color="error">
+                        <Button fullWidth color="error" onClick={ ()=> onDeleteImage(img)}>
                           Borrar
                         </Button>
                       </CardActions>
