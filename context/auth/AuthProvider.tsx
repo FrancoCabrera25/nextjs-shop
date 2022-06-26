@@ -94,10 +94,10 @@ export const AuthProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const { message = '' } = error.response?.data;
+        //const { message = '' } = error.response?.data;
         return {
           hasError: true,
-          message
+          message: error.response?.data,
         };
       }
 
